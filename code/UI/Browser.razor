@@ -1,0 +1,55 @@
+@using Sandbox;
+@using Sandbox.UI;
+
+@namespace Phystest
+@inherits Panel
+
+<root>
+	<div class="inner">
+		<div class="contents">
+			<PackageList Query=@GetQueryString() OnIconPressed=@SpawnPackage></PackageList>
+		</div>
+	</div>
+</root>
+
+@code {
+	public string GetQueryString()
+	{
+		var sort = $"sort:newest";
+		@* var str = $"{sort}type:addon"; *@
+		var str = $"{sort}type:addon +runtime +entity ";
+
+		return str;
+	}
+}
+
+<style>
+	Browser {
+		width: 100%;
+		height: 100%;
+		justify-content: center;
+		align-items: center;
+        opacity: 1;
+            pointer-events: all;
+
+        &.active {
+            pointer-events: all;
+            opacity: 1.0;
+            transition: all 250ms ease-in-out;
+        }
+
+		.inner {
+			width: 80%;
+			height: 80%;
+			background-color: rgba(0, 0, 0, 0.603);
+			backdrop-filter: blur(5px);
+			border-radius: 32px;
+		}
+
+		.contents {
+			color: white;
+			font-family: Poppins;
+		}
+
+	}
+</style>

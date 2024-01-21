@@ -1,0 +1,36 @@
+@using Sandbox;
+@using Sandbox.UI;
+@using Sandbox.UI.Construct;
+
+@namespace Sandbox
+
+<root>
+    @if (PlayerId > 0)
+    {
+        <div class="avatar">
+            <img src="avatar:@PlayerId" />
+        </div>
+    }
+    <div class="header">
+        <label class="name">@Name</label>
+    </div>
+
+    <div class="main">
+        <label class="msg">@Message</label>
+    </div>
+</root>
+
+@code
+{
+    public string Name { get; set; }
+    public string Message { get; set; }
+    public ulong PlayerId { get; set; }
+
+    // lol the TimeSince version broke
+    public float Lifetime { get; set; }
+
+    public override void Tick()
+    {
+        Lifetime += Time.Delta;
+    }
+}

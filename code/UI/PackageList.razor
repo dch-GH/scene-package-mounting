@@ -1,0 +1,143 @@
+﻿﻿@using System.Threading.Tasks;
+@using System.Collections.Generic;
+@using Sandbox;
+@using System;
+@using Sandbox.UI;
+
+@namespace Phystest
+@inherits Panel;
+
+<root>
+	@foreach (var package in Packages)
+	{
+		<PackageIcon Package=@package OnIconPressed=@(() => OnIconPressed?.Invoke( package ))></PackageIcon>
+	}
+</root>
+
+@code
+{
+	/// <summary>
+	/// A list of found packages
+	/// </summary>
+	List<Package> Packages = new List<Package>();
+
+	/// <summary>
+	/// What happens when someone clicks on an icon
+	/// </summary>
+	public Action<Package> OnIconPressed { get; set; }
+
+	/// <summary>
+	/// The string used to query for packages
+	/// </summary>
+	public string Query { get; set; }
+
+	public async Task UpdateItems(int offset = 0)
+	{
+		var found = await Package.FindAsync(Query);
+		if (found != null)
+		{
+			Packages.AddRange(found.Packages);
+		}
+
+		StateHasChanged();
+	}
+
+	int queryHash = 0;
+
+	public override void Tick()
+	{
+		base.Tick();
+
+		if (!IsVisible)
+			return;
+
+		var hash = System.HashCode.Combine(Query);
+		if (queryHash == hash) return;
+		queryHash = hash;
+
+		Packages?.Clear();
+		RefreshItems();
+	}
+
+	public void RefreshItems()
+	{
+		//Canvas.Clear();
+
+		StateHasChanged();
+
+		_ = UpdateItems();
+	}
+
+	protected override int BuildHash()
+	{
+		return System.HashCode.Combine(Time.Now);
+	}
+}
+
+<style>
+	PackageList {
+		flex-wrap: wrap;
+		justify-content: space-around;
+		overflow: scroll;
+
+		.columned .nav {
+			width: 200px;
+			flex-direction: column;
+			padding: 10px;
+		}
+
+		.columned .contents {
+			flex-grow: 1;
+			padding: 10px;
+		}
+
+		.columned .nav .section {
+			margin: 10px;
+			flex-direction: column;
+		}
+
+		.columned .nav .button {
+			background-color: rgba(white, 0.01);
+			color: rgba(white, 0.9);
+			padding: 10px;
+			border-radius: 4px;
+			font-weight: normal;
+			cursor: pointer;
+
+			&:hover {
+				background-color: blue;
+				color: white;
+			}
+
+			&:active {
+				background-color: blue;
+				color: white;
+				transform: scale(0.97);
+			}
+
+			&.active {
+				background-color: blue;
+				color: white;
+			}
+		}
+
+		.columned .nav .button-group {
+			.button {
+				flex-grow: 1;
+				border-radius: 0px;
+				justify-content: center;
+				margin-left: 1px;
+				font-size: 17px;
+
+				&:first-child {
+					border-radius: 5px 0 0 5px;
+					margin-left: 0;
+				}
+
+				&:last-child {
+					border-radius: 0 5px 5px 0;
+				}
+			}
+		}
+	}
+</style>
