@@ -5,18 +5,16 @@ public partial class Browser : Panel
 {
 	async void SpawnPackage( Package p )
 	{
-		Log.Info( p );
-		Log.Info( $"Is local? : {p.IsRemote}" );
 		var package = await Package.FetchAsync( p.FullIdent, false );
-		Log.Info( package );
-		var primaryType = package.GetMeta( "PrimaryAsset", "" );
-		Log.Info( primaryType );
+		Log.Info( $"Spawning package: {package}" );
 
-		var isMounted = package.IsMounted( true, true );
-		Log.Info( $"Is mounted: {isMounted}" );
+		var primaryType = package.GetMeta( "PrimaryAsset", "" );
+		Log.Info( $"Package PrimaryType: {primaryType}" );
+
+		await package.MountAsync( true );
 
 		var type = TypeLibrary.GetType( primaryType );
-		Log.Info( $"Type: {type}" );
+		Log.Info( $"Package PrimaryType from TypeLibrary: {type}" );
 
 		if ( type is null )
 			return;
