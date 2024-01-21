@@ -1,4 +1,6 @@
 
+## This doesn't work with the Scene System at the moment!!
+### It's very close to working without even needing Facepunch to update it due to the Entity System -> Scene System change. The TypeLibrary is failing to get the type even though the package seems to mount correctly. 🤷
 
 
 ## Example addon:
