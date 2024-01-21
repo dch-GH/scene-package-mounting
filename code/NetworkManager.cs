@@ -82,4 +82,32 @@ public sealed class NetworkManager : Component, Component.INetworkListener
 			Clients.Remove( conn );
 		}
 	}
+
+
+	[Broadcast]
+	public void SpawnPackage( string fullIdent )
+	{
+		SpawnPackageAsync( fullIdent );
+	}
+
+	private async void SpawnPackageAsync(string fullIdent)
+	{
+		var package = await Package.FetchAsync( fullIdent, false );
+		Log.Info( $"Spawning package: {package}" );
+
+		var primaryType = package.GetMeta( "PrimaryAsset", "" );
+		Log.Info( $"Package PrimaryType: {primaryType}" );
+
+		await package.MountAsync( true );
+
+		var type = TypeLibrary.GetType( package.GetMeta<string>( "PrimaryAsset" ) );
+		Log.Info( $"Package PrimaryType from TypeLibrary: {type}" );
+
+		if ( type is null )
+			return;
+
+		var go = NetworkManager.Instance.Scene.CreateObject();
+		go.Name = primaryType;
+		go.Components.Create( type, true );
+	}
 }
